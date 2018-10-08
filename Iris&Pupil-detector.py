@@ -32,11 +32,11 @@ def nothing(temp):
     pass
 
 img1 = cv2.imread('download3.jpg')
-img2=cv2.resize(img1, (640,480))
+img2 =cv2.resize(img1, (640,480))
 blur = cv2.medianBlur(img2,5)
-img = cv2.bilateralFilter(blur,5,1000,1000)
-cimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-ret,thresh1 = cv2.threshold(cimg,127,255,cv2.THRESH_BINARY_INV)
+bil = cv2.bilateralFilter(blur,5,1000,1000)
+gray = cv2.cvtColor(bil,cv2.COLOR_BGR2GRAY)
+ret,thresh1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY_INV)
 
 cv2.imshow('Masked Image', thresh1)
  
@@ -47,34 +47,34 @@ while(1):
     cv2.imshow('Masked Image', thresh1)
      
     min_value = cv2.getTrackbarPos('min_value', 'Masked Image')
-    ret,thresh1 = cv2.threshold(cimg,min_value,255,cv2.THRESH_BINARY_INV)
+    ret,thresh1 = cv2.threshold(gray,min_value,255,cv2.THRESH_BINARY_INV)
      
     k = cv2.waitKey(37)
     if k == 27:
         cv2.destroyAllWindows()
         break
-                                                                                             #creating a threshold for finding contours
+                                                                                            
 _, contours, hierarchy = cv2.findContours(thresh1, 1, 2)
 cont = max(contours, key=cv2.contourArea)
 
-(x,y),radius = cv2.minEnclosingCircle(cont)
-center = (int(x), int(y))
-radius = int(radius)
-cv2.circle(img2,center, radius, (0,0,255), 2)
+(x,y), pupil_radius = cv2.minEnclosingCircle(cont)
+pupil_center = (int(x), int(y))
+pupil_radius = int(pupil_radius)
+cv2.circle(img2, pupil_center, pupil_radius, (0,0,255), 2)
 
-iris_radius = radius*4
+iris_radius = pupil_radius*4
 
 (cx,cy) = (int(x)+iris_radius, int(y))
 
 while(1):
-    color = cimg[cy,cx]
+    color = gray[cy,cx]
     if color>110:
         cx = cx-1
     else:
         break
-    s
-rad = cx-center[0]
-cv2.circle(img2,center,rad , (0,0,255), 2)
+    
+iris_radius = cx-pupil_center[0]
+cv2.circle(img2,pupil_center,iris_radius , (0,0,255), 2)
 cv2.imshow('iris+pupil detection', img2)
 cv2.waitKey()
 cv2.destroyAllWindows()
