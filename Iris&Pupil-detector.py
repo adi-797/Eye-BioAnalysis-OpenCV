@@ -26,11 +26,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
+# Importing necessary libraries.
 import cv2, imutils, numpy as np
 
 def nothing(temp):
     pass
 
+# Reading and processing image.
 img1 = cv2.imread('download3.jpg')
 img2 =cv2.resize(img1, (640,480))
 blur = cv2.medianBlur(img2,5)
@@ -39,31 +41,37 @@ gray = cv2.cvtColor(bil,cv2.COLOR_BGR2GRAY)
 ret,thresh1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY_INV)
 
 cv2.imshow('Masked Image', thresh1)
- 
+
+# Trackbar for changing the thrshold value.
 cv2.createTrackbar('min_value','Masked Image',0,255,nothing)
- 
+
+# Trackbar execution.
 while(1):
-    
     cv2.imshow('Masked Image', thresh1)
      
     min_value = cv2.getTrackbarPos('min_value', 'Masked Image')
     ret,thresh1 = cv2.threshold(gray,min_value,255,cv2.THRESH_BINARY_INV)
-     
+    
+    # If ESC is pressed, execution breaks from the loop.
     k = cv2.waitKey(37)
     if k == 27:
         cv2.destroyAllWindows()
         break
-                                                                                            
+        
+# Contour detection.
 _, contours, hierarchy = cv2.findContours(thresh1, 1, 2)
 cont = max(contours, key=cv2.contourArea)
 
+# Center and radius detection of pupil.
 (x,y), pupil_radius = cv2.minEnclosingCircle(cont)
 pupil_center = (int(x), int(y))
 pupil_radius = int(pupil_radius)
 cv2.circle(img2, pupil_center, pupil_radius, (0,0,255), 2)
 
+# Multiplier based on general ratio of radius of iris to pupil.
 iris_radius = pupil_radius*4
 
+# Radius detection for Iris.
 (cx,cy) = (int(x)+iris_radius, int(y))
 
 while(1):
@@ -72,9 +80,11 @@ while(1):
         cx = cx-1
     else:
         break
-    
+
 iris_radius = cx-pupil_center[0]
 cv2.circle(img2,pupil_center,iris_radius , (0,0,255), 2)
+
+# Output Image.
 cv2.imshow('iris+pupil detection', img2)
 cv2.waitKey()
 cv2.destroyAllWindows()
