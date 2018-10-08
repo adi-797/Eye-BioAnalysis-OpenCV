@@ -5,3 +5,12 @@ This script is written in Python 2.7 and utilizes OpenCV, Imutils and Numpy libr
 
 2. Change the threshold value through the slider and fit it best so the pupil area is fairly visible. Press ESC.
 
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Contributers
+
+Aditya Arora adi.arora.797@gmail.com
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+© 2018 Aditya Arora [MIT License](LICENSE)
