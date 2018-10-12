@@ -142,12 +142,6 @@ def main():
     copy_orig = cv2.resize(copy_orig, (240,240))
     res = cv2.bitwise_and(copy_orig,copy_orig, mask = mask)
 
-    ##res = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
-    ##imga = np.asarray(res,dtype=np.float64)
-    ##pol = topolar(imga)
-    # Output Image for nomarlized iris.
-    ##cv2.imshow('Normalize', pol)
-
     y, x = res.shape[:2]
     total = 0
     mat = 0
