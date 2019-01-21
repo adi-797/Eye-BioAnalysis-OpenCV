@@ -14,7 +14,7 @@ echo.
 set /p response1="Want to check the installation? Y/n "
 if %response1%==Y echo Python-3.7.0 installed.
 
-cmd /K "cd C:\Users\User\AppData\Local\Programs\Python\Python37"
+rem cmd /K "cd C:\Users\User\AppData\Local\Programs\Python\Python37"
 
 pip install numpy
 pip install matplotlib
@@ -31,9 +31,9 @@ echo.
 echo "Please wait..."
 echo.
 
-cmd /K "cd C:\Ocular"
+rem cmd /K "cd C:\Ocular"
 
-bitsadmin /transfer myDownloadJob /download /priority normal <---python script link---> C:\Ocular\init.py
+rem bitsadmin /transfer myDownloadJob /download /priority normal <---python script link---> C:\Ocular\init.py
 bitsadmin /transfer myDownloadJob /download /priority normal <---python script link---> C:\Ocular\application.py
 bitsadmin /transfer myDownloadJob /download /priority normal <---batch script link---> C:\Ocular\application.bat
 bitsadmin /transfer myDownloadJob /download /priority normal <---readme link---> C:\Ocular\readme.txt
