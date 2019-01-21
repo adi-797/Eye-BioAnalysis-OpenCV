@@ -34,9 +34,9 @@ echo.
 rem cmd /K "cd C:\Ocular"
 
 rem bitsadmin /transfer myDownloadJob /download /priority normal <---python script link---> C:\Ocular\init.py
-bitsadmin /transfer myDownloadJob /download /priority normal <---python script link---> C:\Ocular\application.py
-bitsadmin /transfer myDownloadJob /download /priority normal <---batch script link---> C:\Ocular\application.bat
-bitsadmin /transfer myDownloadJob /download /priority normal <---readme link---> C:\Ocular\readme.txt
+bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/application.py C:\Ocular\application.py
+bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/application.bat C:\Ocular\application.bat
+bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/Readme.txt C:\Ocular\readme.txt
 
 set /p response3="Want to run the application now? Y/n "
 if %response3%==Y (python application.py) else (readme.txt)
