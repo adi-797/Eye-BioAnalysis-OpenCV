@@ -35,10 +35,10 @@ echo.
 rem cmd /K "cd C:\Ocular"
 
 rem bitsadmin /transfer myDownloadJob /download /priority normal <---python script link---> C:\Ocular\init.py
-bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/application.py C:\Ocular\gui.py
-bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/application.py C:\Ocular\log.py
-bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/application.py C:\Ocular\model.py
-bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/application.py C:\Ocular\logo.png
+bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/gui.py C:\Ocular\gui.py
+bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/log.py C:\Ocular\log.py
+bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/model.py C:\Ocular\model.py
+bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/logo.png C:\Ocular\logo.png
 bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/application.bat C:\Ocular\application.bat
 bitsadmin /transfer myDownloadJob /download /priority normal https://github.com/adi-797/Eye-BioAnalysis-OpenCV/blob/Srajan/Ocular/Readme.txt C:\Ocular\readme.txt
 
