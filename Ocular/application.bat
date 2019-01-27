@@ -1,5 +1,5 @@
 @echo off
-python application.py
+python gui.py
 
 echo "Thank you for using Ocular."
 echo.
