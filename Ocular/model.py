@@ -1,11 +1,12 @@
+import cv2, numpy as np
+
 class model:
 
-    def bilLevels():
+    def bilLevels(img):
         print ("bil")
-        pass
 
-    def cholLevels():
-        pass
+    def cholLevels(img):
+    	print ("bil")
 
-    def catLevels():
-        pass
+    def catLevels(img):
+    	print ("bil")
