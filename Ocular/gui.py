@@ -2,12 +2,14 @@ from tkinter import *
 from time import sleep
 from log import logger
 from model import model
+import cv2, numpy as np
 
 name_entry = ''
 age_entry = ''
 sex_entry = ''
 email_entry = ''
 pass1_entry = ''
+analysisType = []
 
 def reg_open():
 
@@ -48,16 +50,134 @@ def reg_open():
             
 def login_open():
 
-    def bilLevels():
-        model.bilLevels()
-
-    def cholLevels():
-        model.cholLevels()
-
-    def catLevels():
-        model.catLevels()
-
     def login():
+
+        def login_copy():
+            
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 0, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 1, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 2, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 3, column = 0, sticky = '')
+
+            Label(window4, text = "Select what type of analysis you want.", bg = "white", fg="black", font="none 16 bold") .grid(row = 0, column = 0, sticky = '')
+
+            Button(window4, text='Bilirubin levels', width=20, command=bilLevels).grid(row=1, column=0, sticky='')
+            Button(window4, text='Cholesterol levels', width=20, command=cholLevels).grid(row=2, column=0, sticky='')
+            Button(window4, text='Catarct levels', width=20, command=catLevels).grid(row=3, column=0, sticky='')
+
+        def upload():
+            
+            from tkinter import filedialog
+
+            kill = False
+
+            while True:
+
+                root = Tk()
+                root.withdraw()
+                file_path = filedialog.askopenfilename()
+                root.destroy()
+                
+                if kill:
+                    window6.destroy()
+
+            
+                if file_path is not "" and (".png" in file_path or ".jpeg" in file_path or ".jpg" in file_path or ".JPG" in file_path or ".PNG" in file_path):
+
+                    img = cv2.imread(str(file_path))
+                    break
+
+                else:
+                    
+                    window6 = Tk()
+                    window6.title("ERROR")
+                    window6.resizable(0, 0)
+                    window6.configure(background = "white")
+
+                    Label(window6, text = "Only .jpg, .jpeg and .png is allowed", bg = "white", fg="black", font="none 16 bold") .grid(row = 1, column = 0, sticky = '')
+                    kill = True
+                
+            model.bilLevels(img)
+            
+
+        def click():
+
+            camera = cv2.VideoCapture(0)
+            
+            while True:
+                _, img = camera.read()
+
+                cv2.putText(img,'Press "q" to capture.',(20,30), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255),2,cv2.LINE_AA)
+                cv2.imshow(":", img)
+                
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    _, img = camera.read()
+                    cv2.destroyAllWindows()
+                    break
+
+            cv2.imshow("frame", img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            camera.release()
+
+            if analysisType[len(analysisType)-1] == 1:
+                
+                model.bilLevels(img)
+
+            elif analysisType[len(analysisType)-1] == 2:
+
+                model.cholLevels(img)
+
+            elif analysisType[len(analysisType)-1] == 3:
+
+                model.cholLevels(img)
+            
+            
+
+        def bilLevels():
+
+            analysisType.append(1)
+            
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 0, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 1, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 2, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 3, column = 0, sticky = '')
+
+            Button(window4, text='Back', width=20, command=login_copy).grid(row=0, column=0, sticky='W')
+
+            Button(window4, text='Upload', width=20, command=upload).grid(row=2, column=0, sticky='')
+            Button(window4, text='Click', width=20, command=click).grid(row=3, column=0, sticky='')
+
+            
+        def cholLevels():
+
+            analysisType.append(2)
+            
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 0, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 1, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 2, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 3, column = 0, sticky = '')
+
+            Button(window4, text='Back', width=20, command=login_copy).grid(row=0, column=0, sticky='W')
+
+            Button(window4, text='Upload', width=20, command=upload).grid(row=2, column=0, sticky='')
+            Button(window4, text='Click', width=20, command=click).grid(row=3, column=0, sticky='')
+            
+
+        def catLevels():
+
+            analysisType.append(3)
+            
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 0, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 1, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 2, column = 0, sticky = '')
+            Label(window4, text = "", width=42, bg = "white", fg="black", font="none 16 bold") .grid(row = 3, column = 0, sticky = '')
+
+            Button(window4, text='Back', width=20, command=login_copy).grid(row=0, column=0, sticky='W')
+
+            Button(window4, text='Upload', width=20, command=upload).grid(row=2, column=0, sticky='')
+            Button(window4, text='Click', width=20, command=click).grid(row=3, column=0, sticky='')
+            
 
         log = ['a'] #csv file data
 
@@ -74,11 +194,11 @@ def login_open():
             window4.resizable(0, 0)
             window4.configure(background = "white")
 
-            Label(window4, text = "Select what type of analysis you want.", bg = "white", fg="black", font="none 16 bold") .grid(row = 4, column = 0, sticky = '')
+            Label(window4, text = "Select what type of analysis you want.", bg = "white", fg="black", font="none 16 bold") .grid(row = 0, column = 0, sticky = '')
 
-            Button(window4, text='Bilirubin levels', width=20, command=bilLevels).grid(row=5, column=0, sticky='')
-            Button(window4, text='Cholesterol levels', width=20, command=cholLevels).grid(row=6, column=0, sticky='')
-            Button(window4, text='Catarct levels', width=20, command=catLevels).grid(row=7, column=0, sticky='')
+            Button(window4, text='Bilirubin levels', width=20, command=bilLevels).grid(row=1, column=0, sticky='')
+            Button(window4, text='Cholesterol levels', width=20, command=cholLevels).grid(row=2, column=0, sticky='')
+            Button(window4, text='Catarct levels', width=20, command=catLevels).grid(row=3, column=0, sticky='')
 
             
         else:
