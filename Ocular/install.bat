@@ -17,6 +17,7 @@ if %response1%==Y echo Python-3.7.0 installed.
 rem cmd /K "cd C:\Users\User\AppData\Local\Programs\Python\Python37"
 
 pip install numpy
+pip install pandas
 pip install matplotlib
 pip install scipy
 pip install scikit-learn
