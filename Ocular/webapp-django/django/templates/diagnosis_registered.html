@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Direct Test</title>
+    <link rel="stylesheet" href="{% static 'css/direct_text.css' %}">
+</head>
+<body>
+        <ul class="menu">
+                <li><a href="/app/home" >Home</a></li>
+                <li><a href="#">History</a></li>
+                <li><a href="/app/home/">Log Out</a></li>
+                <li class="slider"></li>
+        </ul>
+
+        <div class="container">
+                <div class="leftpane">
+                <form action="/app/camera/cataract/">
+                  <button class="Clickers" id="Button1">Catract</button>
+              </form>
+                </div>
+                <div class="middlepane">
+                    <form action="/app/camera/bilirubin/">
+                    <button class="Clickers" id="Button2">Bilirubin</button>
+                </form>
+                </div>
+                <div class="rightpane">
+                    <form action="/app/camera/cholesterol/">
+                  <button class="Clickers" id="Button3">Colestrol</button>
+              </form>
+                </div>
+              </div>
+    
+</body>
+</html>
