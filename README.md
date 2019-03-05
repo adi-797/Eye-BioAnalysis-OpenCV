@@ -1,6 +1,5 @@
-# Srajan
-
-# Further scripts would be uploaded soon. . .
+A desktop module developed using batch and python (under development)
+A Django app. (almost finished, though the code is not well organized, with almost no abstraction in the main module yet and no in-code documention.)
 ------------------------------------------------------------------------------------------------------------------------------------------
 
 Contributers
