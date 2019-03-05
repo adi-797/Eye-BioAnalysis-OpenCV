@@ -15,6 +15,8 @@ from twilio.rest import Client
 
 #from . import NameForm
 
+username_log = ''
+password_log = ''
 
 class SignUp(generic.CreateView):
     form_class = UserCreationForm
@@ -38,39 +40,42 @@ def whatsapppost(a,b):
     #     if str(datetime.datetime.now())[12:13] == empty[i]:
 
 
-    account_sid = 'ACd0767ea59a8b91740f8c3cc02e18e627' 
-    auth_token = 'edc7fa535e6bf70fdb5e5ccb6aea9e59' 
+    account_sid = 'ACcd5aa4fc4ca8886844db39d149363f36' 
+    auth_token = '602f6db1dd1bd228c84dcbe15f929df1' 
     client = Client(account_sid, auth_token) 
      
     message = client.messages.create( 
                                   from_='whatsapp:+14155238886',  
                                   body='Please have your ' + str(a) + ' medicine ' + str(b) + ' times today.',      
-                                  to='whatsapp:+919999795087' 
+                                  to='whatsapp:+918375059963' 
                               )
 
 def login(request):
     if 'Username' and 'Password' in request.GET:
-        username = request.GET['Username']
-        password = request.GET['Password']
+        username_log = request.GET['Username']
+        password_log = request.GET['Password']
+
+        with 
         
-        passvar = { 'user': username,
+        passvar = { 'user': username_log, 'pass' : password_log
         }
+
+
 
     else:
         return HttpResponse("Incorrect credentials.")
     return render(request, 'dashboard.html', passvar )
 
 def login_only_redirect(request):
-    if 'username' and 'password' in request.GET:
-        username = request.GET['username']
-        password = request.GET['password']
+    if 'Username' and 'Password' in request.GET:
+        username_log = request.GET['Username']
+        password_log = request.GET['Password']
         
-        passvar = { 'user': username,
+        passvar = { 'user': username_log, 'pass' : password_log
         }
 
     else:
         return HttpResponse("Incorrect credentials.")
-
     return render(request, 'dashboard.html', passvar )
 
 def genform(request):
@@ -91,7 +96,6 @@ def notifyformexec(request):
 
 def diagnosis_registered(request):
     return render(request, 'diagnosis_registered.html')
-    
 
 def signup(request):
     if 'emailid' and 'username' and 'date' and 'phone' and 'password' and 'confirmpass' in request.GET:
@@ -164,6 +168,10 @@ def aadhar(request):
         im = cv2.imread(file_path)
         uid, name = decode(im)
         passvar = {'pass': uid, 'user': name}
+        with open('auth.csv','a') as fd:
+	        fd.write(uid + '+' + name + '*')
+
+	    fd.close()
         return render(request, 'dashboard.html', passvar)
 
     else:
@@ -242,6 +250,10 @@ def aadhar2(request):
                     break
 
     passvar = {'pass': uid, 'user': name}
+    with open('auth.csv','a') as fd:
+	        fd.write(uid + '+' + name + '*')
+
+	fd.close()
 
     return render(request, 'dashboard.html', passvar)
     
@@ -275,9 +287,9 @@ def camera():
     face_cascade = cv2.CascadeClassifier(os.path.join(BASE_DIR, 'haarcascade_frontalface_alt.xml'))
 
     try:
-        camera=cv2.VideoCapture(1)
+        camera=cv2.VideoCapture(0)
     except:
-        camera = cv2.VideoCapture(0)
+        camera = cv2.VideoCapture(1)
 
     numerator=0
     denominator=0
