@@ -1,4 +1,4 @@
-myCsvRow = "last"
-with open('log.csv','a') as fd:
-    for i in range(5):
-        fd.write(myCsvRow)
+a = '462909248449+Nalin Luthra*462909248449+Nalin Luthra*q+Aditya Arora*'
+
+if 'q' in a:
+    print(True)

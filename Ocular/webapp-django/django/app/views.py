@@ -55,8 +55,16 @@ def login(request):
         username_log = request.GET['Username']
         password_log = request.GET['Password']
 
-        with 
-        
+        import csv
+        with open('auth.csv', 'r') as f:
+        	read = csv.reader(f)
+        	for row in read:
+        		print (row[0], username_log, password_log)
+        		if str(username_log) in str(row[0]) and str(password_log) in str(row[0]):
+        			pass
+        		else:
+        			return HttpResponse('Incorrect credentials.')
+
         passvar = { 'user': username_log, 'pass' : password_log
         }
 
@@ -70,6 +78,19 @@ def login_only_redirect(request):
     if 'Username' and 'Password' in request.GET:
         username_log = request.GET['Username']
         password_log = request.GET['Password']
+
+        import csv
+        with open('auth.csv', 'r') as f:
+        	read = csv.reader(f)
+        	for row in read:
+        		print (row[0], username_log, password_log)
+        		if str(username_log) in str(row[0]) and str(password_log) in str(row[0]):
+
+        			f.close()
+        			pass
+        		else:
+        			f.close()
+        			return HttpResponse('Incorrect credentials.')
         
         passvar = { 'user': username_log, 'pass' : password_log
         }
@@ -111,10 +132,11 @@ def signup(request):
         
         else:
             #dt = pandas.read_csv('file.csv').to_dict()
-            credentials = {'mail': emailid, 'user':username, 'date': date, 'phone': phone, 'pass': password}
-            df = DataFrame(credentials, columns= ['mail', 'user','date','phone','pass'], index=[0])
-            BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            export_csv = df.to_csv (os.path.join(BASE_DIR, 'exportdata.csv'), index = False, header=True)
+            with open('auth.csv','a') as fd:
+	            fd.write(password + '+' + username + '*')
+
+            fd.close()
+
             return render(request, 'login_only.html')
 
 def decode(im):
@@ -169,9 +191,9 @@ def aadhar(request):
         uid, name = decode(im)
         passvar = {'pass': uid, 'user': name}
         with open('auth.csv','a') as fd:
-	        fd.write(uid + '+' + name + '*')
+            fd.write(uid + '+' + name + '*')
 
-	    fd.close()
+        fd.close()
         return render(request, 'dashboard.html', passvar)
 
     else:
@@ -251,10 +273,9 @@ def aadhar2(request):
 
     passvar = {'pass': uid, 'user': name}
     with open('auth.csv','a') as fd:
-	        fd.write(uid + '+' + name + '*')
+        fd.write(uid + '+' + name + '*')
 
-	fd.close()
-
+    fd.close()
     return render(request, 'dashboard.html', passvar)
     
 
