@@ -15,9 +15,6 @@ from twilio.rest import Client
 
 #from . import NameForm
 
-username_log = ''
-password_log = ''
-
 class SignUp(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
@@ -67,6 +64,10 @@ def login(request):
                         break
 
         if user_auth == 1:
+            f = open('session.csv', "w+")
+            f.close()
+            with open('session.csv', 'a') as f:
+            	f.write(str(password_log) + '+' + str(username_log))
             pass
         else:
             return HttpResponse("Incorrect credentials.")
@@ -97,6 +98,11 @@ def login_only_redirect(request):
                         break
 
         if user_auth == 1:
+            f = open('session.csv', "w+")
+            f.close()
+            with open('session.csv', 'a') as f:
+            	f.write(str(password_log) + '+' + str(username_log))
+            f.close()
             pass
         else:
             return HttpResponse("Incorrect credentials.")
@@ -546,11 +552,8 @@ def bilirubin(sample, cx,cy):
 
     average = float(total)/float(mat)
     average = 1- np.interp(average, [0,255], [0,1])
-    print (average)
-    rang = str(average*3) + ' to ' + str(average*9) + ' mg/dl'
-    rang = str(rang)
 
-    return rang
+    return average
 
 
 def cataract(sample, cx,cy):
@@ -572,40 +575,43 @@ def cataract(sample, cx,cy):
     except:
         mat = 10
 
-    print(mat)
-
-    perc = "Percentage = " + str(mat) + " %"
-    perc = str(perc)
-
-    return perc
+    return mat
 
 def log_med_data(tag, data):
-	if username_log != '' and password_log != '':
-		with open('auth.csv', 'r') as f:
-			read = csv.reader(f)
-			i = 0
-			for row in read:
-				if row != []:
-					if (str(password_log)'+' str(username_log)) in row[0] and str(tag) in row[0]:
-						index = i
-						f.close()
-						bottle_list = []
+	with open('session.csv', 'r') as f:
+            read = csv.reader(f)
+            for row in read:
+                if row != []:
+                	ptr = str(row[0])
 
-						with open('auth.csv', 'r') as b:
-							bottles = csv.reader(b)
-							bottle_list.extend(bottles)
-						line_to_override = {index:[row[0]+data+'*'] }
-						f = open('auth.csv', "w+")
-						f.close()
+	f.close()
 
-						with open('auth.csv','a') as f:
-							for line, row in enumerate(bottle_list):
-								data = line_to_override.get(line, row)
-								if data != []:
-									f.write(str(data[0])+'\n')
+	with open('auth.csv', 'r') as f:
+		read = csv.reader(f)
+		i = 0
+		for row in read:
+			if row != []:
+				if (ptr) in row[0] and str(tag) in row[0]:
+					index = i
+					f.close()
+					bottle_list = []
 
-						break
-				i+=1
+					with open('auth.csv', 'r') as b:
+						bottles = csv.reader(b)
+						bottle_list.extend(bottles)
+					line_to_override = {index:[row[0]+str(data)+'*'] }
+					f = open('auth.csv', "w+")
+					f.close()
+
+					with open('auth.csv','a') as f:
+						for line, row in enumerate(bottle_list):
+							data = line_to_override.get(line, row)
+							if data != []:
+								f.write(str(data[0])+'\n')
+
+					b.close()
+					break
+			i+=1
 
 
 
@@ -614,13 +620,23 @@ def bilirubin_login(request):
 
     bilirubin_level = bilirubin(sample_frame, cx, cy)
 
-    return HttpResponse(bilirubin_level)
+    log_med_data('bil', (bilirubin_level*3 + bilirubin_level*9) / 2)
+
+    rang = str(bilirubin_level*3) + ' to ' + str(bilirubin_level*9) + ' mg/dl'
+    rang = str(rang)
+
+    return HttpResponse(rang)
 
 
 def cataract_login(request):
     sample_frame, cx, cy = camera()
 
     cataract_level = cataract(sample_frame, cx, cy)
+
+    log_med_data('cat', cataract_level)
+
+    cataract_level = "Percentage = " + str(cataract_level) + " %"
+    cataract_level = str(cataract_level)
 
     return HttpResponse(cataract_level)
 
@@ -630,6 +646,8 @@ def cholesterol_login(request):
 
     cholesterol_level = cholesterol(sample_frame, cx, cy)
 
+    log_med_data('chol', cholesterol_level)
+
     return HttpResponse(cholesterol_level)
 
 def bilirubin_(request):
@@ -637,12 +655,18 @@ def bilirubin_(request):
 
     bilirubin_level = bilirubin(sample_frame,cx,cy)
 
-    return HttpResponse(bilirubin_level)
+    rang = str(bilirubin_level*3) + ' to ' + str(bilirubin_level*9) + ' mg/dl'
+    rang = str(rang)
+
+    return HttpResponse(rang)
 
 def cataract_(request):
     sample_frame,cx,cy = camera()
 
     cataract_level = cataract(sample_frame,cx,cy)
+
+    cataract_level = "Percentage = " + str(cataract_level) + " %"
+    cataract_level = str(cataract_level)
 
     return HttpResponse(cataract_level)
 
@@ -658,3 +682,8 @@ def about(request):
 
 def contact(request):
     return render(request, 'contact.html')
+
+def logout(request):
+	f = open('session.csv', "w+")
+	f.close()
+	return render(request, 'search-form.html')

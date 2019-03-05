@@ -6,9 +6,13 @@ from . import views
 
 urlpatterns = [
     #path('signup/', views.SignUp.as_view(), name='signup'),
+    path('camera/cholesterol_login/', views.cholesterol_login, name='cholesterol_login'),
+    path('camera/bilirubin_login/', views.bilirubin_login, name='bilirubin_login'),
+    path('camera/cataract_login/', views.cataract_login, name='cataract_login'),
     path('camera/cholesterol/', views.cholesterol_, name='cholesterol_'),
     path('camera/bilirubin/', views.bilirubin_, name='bilirubin_'),
     path('camera/cataract/', views.cataract_, name='cataract_'),
+    path('logout/', views.logout, name='logout'),
     path('home/', views.search_form),
     url(r'^signup/$', views.signup),
     path('login/', views.login),
