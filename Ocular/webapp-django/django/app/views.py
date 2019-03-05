@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.http import HttpResponse
 from django.shortcuts import render
-import numpy as np, cv2, os, imutils, datetime, time
+import numpy as np, cv2, os, imutils, datetime, time, csv
 from statistics import mode
 from tkinter import *
 from pyzbar import pyzbar
@@ -55,15 +55,21 @@ def login(request):
         username_log = request.GET['Username']
         password_log = request.GET['Password']
 
-        import csv
+        user_auth = 0
+
         with open('auth.csv', 'r') as f:
-        	read = csv.reader(f)
-        	for row in read:
-        		print (row[0], username_log, password_log)
-        		if str(username_log) in str(row[0]) and str(password_log) in str(row[0]):
-        			pass
-        		else:
-        			return HttpResponse('Incorrect credentials.')
+            read = csv.reader(f)
+            for row in read:
+                if row != []:
+                    if (str(password_log) + '+' + str(username_log)) in str(row[0]):
+                        f.close()
+                        user_auth = 1
+                        break
+
+        if user_auth == 1:
+            pass
+        else:
+            return HttpResponse("Incorrect credentials.")
 
         passvar = { 'user': username_log, 'pass' : password_log
         }
@@ -79,18 +85,21 @@ def login_only_redirect(request):
         username_log = request.GET['Username']
         password_log = request.GET['Password']
 
-        import csv
-        with open('auth.csv', 'r') as f:
-        	read = csv.reader(f)
-        	for row in read:
-        		print (row[0], username_log, password_log)
-        		if str(username_log) in str(row[0]) and str(password_log) in str(row[0]):
+        user_auth = 0
 
-        			f.close()
-        			pass
-        		else:
-        			f.close()
-        			return HttpResponse('Incorrect credentials.')
+        with open('auth.csv', 'r') as f:
+            read = csv.reader(f)
+            for row in read:
+                if row != []:
+                    if (str(password_log) + '+' +str(username_log)) in str(row[0]):
+                        f.close()
+                        user_auth = 1
+                        break
+
+        if user_auth == 1:
+            pass
+        else:
+            return HttpResponse("Incorrect credentials.")
         
         passvar = { 'user': username_log, 'pass' : password_log
         }
@@ -120,24 +129,27 @@ def diagnosis_registered(request):
 
 def signup(request):
     if 'emailid' and 'username' and 'date' and 'phone' and 'password' and 'confirmpass' in request.GET:
-        emailid = request.GET['emailid']
-        username = request.GET['username']
-        date = request.GET['date']
-        phone = request.GET['phone']
-        password = request.GET['password']
-        confirmpass = request.GET['confirmpass']
+	    emailid = request.GET['emailid']
+	    username = request.GET['username']
+	    date = request.GET['date']
+	    phone = request.GET['phone']
+	    password = request.GET['password']
+	    confirmpass = request.GET['confirmpass']
 
-        if password != confirmpass:
-            return HttpResponse('Incorrect password! Retry.')
-        
-        else:
-            #dt = pandas.read_csv('file.csv').to_dict()
-            with open('auth.csv','a') as fd:
-	            fd.write(password + '+' + username + '*')
+	    if password != confirmpass:
+	        return HttpResponse('Password do not match! Retry.')
 
-            fd.close()
+	    else:
+	        with open('auth.csv', 'a') as f:
+		        f.write(str(password) + '+' + str(username) + ': bil:\n')
+		        f.write(str(password) + '+' + str(username) + ': cat:\n')
+		        f.write(str(password) + '+' + str(username) + ': chol:\n')
 
-            return render(request, 'login_only.html')
+		        f.close()
+
+	        return render(request, 'login_only.html')
+    else:
+        return HttpResponse('Incorrect password! Retry.')
 
 def decode(im):
     #Find barcodes and QR codes
@@ -190,10 +202,13 @@ def aadhar(request):
         im = cv2.imread(file_path)
         uid, name = decode(im)
         passvar = {'pass': uid, 'user': name}
-        with open('auth.csv','a') as fd:
-            fd.write(uid + '+' + name + '*')
+        
+        with open('auth.csv', 'a') as f:
+        	f.write(str(uid) + '+' + str(name) + ': bil:\n')
+        	f.write(str(uid) + '+' + str(name) + ': cat:\n')
+        	f.write(str(uid) + '+' + str(name) + ': chol:\n')
 
-        fd.close()
+        f.close()
         return render(request, 'dashboard.html', passvar)
 
     else:
@@ -272,10 +287,13 @@ def aadhar2(request):
                     break
 
     passvar = {'pass': uid, 'user': name}
-    with open('auth.csv','a') as fd:
-        fd.write(uid + '+' + name + '*')
 
-    fd.close()
+    with open('auth.csv', 'a') as f:
+    	f.write(str(uid) + '+' + str(name) + ': bil:\n')
+    	f.write(str(uid) + '+' + str(name) + ': cat:\n')
+    	f.write(str(uid) + '+' + str(name) + ': chol:\n')
+
+    f.close()
     return render(request, 'dashboard.html', passvar)
     
 
@@ -560,6 +578,59 @@ def cataract(sample, cx,cy):
     perc = str(perc)
 
     return perc
+
+def log_med_data(tag, data):
+	if username_log != '' and password_log != '':
+		with open('auth.csv', 'r') as f:
+			read = csv.reader(f)
+			i = 0
+			for row in read:
+				if row != []:
+					if (str(password_log)'+' str(username_log)) in row[0] and str(tag) in row[0]:
+						index = i
+						f.close()
+						bottle_list = []
+
+						with open('auth.csv', 'r') as b:
+							bottles = csv.reader(b)
+							bottle_list.extend(bottles)
+						line_to_override = {index:[row[0]+data+'*'] }
+						f = open('auth.csv', "w+")
+						f.close()
+
+						with open('auth.csv','a') as f:
+							for line, row in enumerate(bottle_list):
+								data = line_to_override.get(line, row)
+								if data != []:
+									f.write(str(data[0])+'\n')
+
+						break
+				i+=1
+
+
+
+def bilirubin_login(request):
+    sample_frame, cx, cy = camera()
+
+    bilirubin_level = bilirubin(sample_frame, cx, cy)
+
+    return HttpResponse(bilirubin_level)
+
+
+def cataract_login(request):
+    sample_frame, cx, cy = camera()
+
+    cataract_level = cataract(sample_frame, cx, cy)
+
+    return HttpResponse(cataract_level)
+
+
+def cholesterol_login(request):
+    sample_frame, cx, cy = camera()
+
+    cholesterol_level = cholesterol(sample_frame, cx, cy)
+
+    return HttpResponse(cholesterol_level)
 
 def bilirubin_(request):
     sample_frame,cx,cy = camera()
