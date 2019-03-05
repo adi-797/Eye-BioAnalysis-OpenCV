@@ -11,7 +11,9 @@ from imutils.video import VideoStream
 import argparse
 import datetime
 from pandas import DataFrame
-from twilio.rest import Client 
+from twilio.rest import Client
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 #from . import NameForm
 
@@ -147,9 +149,9 @@ def signup(request):
 
 	    else:
 	        with open('auth.csv', 'a') as f:
-		        f.write(str(password) + '+' + str(username) + ': bil:\n')
-		        f.write(str(password) + '+' + str(username) + ': cat:\n')
-		        f.write(str(password) + '+' + str(username) + ': chol:\n')
+		        f.write(str(password) + '+' + str(username) + ': bil*\n')
+		        f.write(str(password) + '+' + str(username) + ': cat*\n')
+		        f.write(str(password) + '+' + str(username) + ': chol*\n')
 
 		        f.close()
 
@@ -210,9 +212,9 @@ def aadhar(request):
         passvar = {'pass': uid, 'user': name}
         
         with open('auth.csv', 'a') as f:
-        	f.write(str(uid) + '+' + str(name) + ': bil:\n')
-        	f.write(str(uid) + '+' + str(name) + ': cat:\n')
-        	f.write(str(uid) + '+' + str(name) + ': chol:\n')
+        	f.write(str(uid) + '+' + str(name) + ': bil:*\n')
+        	f.write(str(uid) + '+' + str(name) + ': cat:*\n')
+        	f.write(str(uid) + '+' + str(name) + ': chol:*\n')
 
         f.close()
         return render(request, 'dashboard.html', passvar)
@@ -295,9 +297,9 @@ def aadhar2(request):
     passvar = {'pass': uid, 'user': name}
 
     with open('auth.csv', 'a') as f:
-    	f.write(str(uid) + '+' + str(name) + ': bil:\n')
-    	f.write(str(uid) + '+' + str(name) + ': cat:\n')
-    	f.write(str(uid) + '+' + str(name) + ': chol:\n')
+    	f.write(str(uid) + '+' + str(name) + ': bil:*\n')
+    	f.write(str(uid) + '+' + str(name) + ': cat:*\n')
+    	f.write(str(uid) + '+' + str(name) + ': chol:*\n')
 
     f.close()
     return render(request, 'dashboard.html', passvar)
@@ -687,3 +689,84 @@ def logout(request):
 	f = open('session.csv', "w+")
 	f.close()
 	return render(request, 'search-form.html')
+
+def history(request):
+	with open('session.csv', 'r') as f:
+            read = csv.reader(f)
+            for row in read:
+                if row != []:
+                	ptr = str(row[0])
+
+	f.close()
+
+	with open('auth.csv', 'r') as f:
+		read = csv.reader(f)
+		i = 0
+		count  = 0
+		for row in read:
+			if row != []:
+				if ptr in row[0]:
+					if 'bil' in row[0]:
+						bil_gr = str(row[0])
+						start = bil_gr.index('*')
+						num = ''
+						num_list = []
+						i = start+1
+						while i < len(bil_gr):
+							if bil_gr[i] == '*':
+								num_list.append(float(num))
+								num = ''
+								i+=1
+
+							if i < len(bil_gr):
+								num+= bil_gr[i]
+							i+=1
+					if 'cat' in row[0]:
+						bil_gr = str(row[0])
+						start = bil_gr.index('*')
+						num = ''
+						num_list2 = []
+						i = start+1
+						while i < len(bil_gr):
+							if bil_gr[i] == '*':
+								num_list2.append(float(num))
+								num = ''
+								i+=1
+
+							if i < len(bil_gr):
+								num+= bil_gr[i]
+							i+=1
+
+					if 'chol' in row[0]:
+						bil_gr = str(row[0])
+						start = bil_gr.index('*')
+						num = ''
+						num_list3 = []
+						i = start+1
+						while i < len(bil_gr):
+							if bil_gr[i] == '*':
+								if num == 'NORMAL':
+									temp_var = 1
+								elif num == 'MILD':
+									temp_var = 5
+								else:
+									temp_var = 10
+
+								num_list3.append(temp_var)
+								num = ''
+								i+=1
+							if i < len(bil_gr):
+								num+= bil_gr[i]
+							i+=1
+
+	bil = mpatches.Patch(color='yellow', label='Bilirubin levels (mg/dl)')
+	cat = mpatches.Patch(color='green', label='Cataract levels (%)')
+	chol = mpatches.Patch(color='red', label='Cholesterol levels (NORMAL=1, MILD=5, HIGH=10')
+	plt.legend(handles = [bil, cat, chol])
+	plt.plot(num_list, 'y')
+	plt.plot(num_list2, 'g')
+	plt.plot(num_list3, 'r')
+	plt.show()
+
+	return HttpResponse('Done! Please click back button.')
+

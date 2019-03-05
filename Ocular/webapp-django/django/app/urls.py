@@ -13,6 +13,7 @@ urlpatterns = [
     path('camera/bilirubin/', views.bilirubin_, name='bilirubin_'),
     path('camera/cataract/', views.cataract_, name='cataract_'),
     path('logout/', views.logout, name='logout'),
+    path('history/', views.history, name='history'),
     path('home/', views.search_form),
     url(r'^signup/$', views.signup),
     path('login/', views.login),
