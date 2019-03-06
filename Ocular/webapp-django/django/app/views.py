@@ -761,6 +761,9 @@ def gen_diagnosis(request):
 		element = request.GET['search']
 		element = str(element).lower()
 
+		if len(element) < 3 or element == 'and':
+			return render(request, 'gen_diagnosis.html', {'flag2': 0, 'element': str(element)})
+
 		with open('data.csv', 'r') as f:
 			read = csv.reader(f)
 			for row in read:
@@ -768,9 +771,19 @@ def gen_diagnosis(request):
 					row_itr = str(row[0]).lower()
 					if element in row_itr:
 						ret = { 'flag': 1, 'deficiency':str(row[2]), 'food': str(row[1]), 'flag2':1 , 'element': str(row[0])}
-						print (ret)
 						return render(request, 'gen_diagnosis.html', ret)
 		return render(request, 'gen_diagnosis.html', {'flag2': 0, 'element': str(element)})
 
 	except:
-		return render(request, 'gen_diagnosis.html', {'flag' : 0})
+		try:
+			helpp = request.GET['help']
+			ret = []
+			with open('data.csv', 'r') as f:
+				read = csv.reader(f)
+				for row in read:
+					if row != []:
+						ret.append(str(row[0]))
+			return render(request, 'gen_diagnosis.html', { 'help': ret, 'flag3': 1})
+
+		except:
+			return render(request, 'gen_diagnosis.html', {'flag' : 0})

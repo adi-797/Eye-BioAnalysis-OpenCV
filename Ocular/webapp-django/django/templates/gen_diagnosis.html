@@ -18,18 +18,34 @@
         </ul>
         <div class="container">
           <div>
-            <p>Enter a symptom here </p>
-              <form action="/app/gen_diagnosis/">
+            <p style="align-items: left" align="left">Enter a symptom here </p>
+              <form style="align-items: left" align="left" action="/app/gen_diagnosis/">
                 <input name='search' type="text" placeholder="Enter Symptom"><button>Search</button>
               </form>
+            <p style="align-items: right" align="right">
+              Need Help finding your exact symptom? <br> <form style="align-items: right" align="right" action='/app/gen_diagnosis/'><input style="size: 10px; color: red; background-color: yellow;" type="checkbox" name="help"><button>Check Box and submit</button></form>
+            </p>
           </div>
         </div>
         {% if flag != 0 %}
         <div>
+          {% if flag3 == 1%}
+          <div>
+            <p>
+              Symptoms list: <br>
+              {% block help %}
+              {% for ele in help%}
+              <li>{{ ele }}</li>>
+              {% endfor %}
+              {% endblock %}
+            </p>
+          </div>
+          {% else %}
           {% if flag2 == 1 %}
           <p> Related Symptom/s: <b> {{ element }}</b> <br> You have deficiency of <b> {{ deficiency }} </b>. <br> Kindly increase intake of the following food/s: <i>{{ food }}</i>.</p>
           {% else %}
           <p> Symptom: <b> {{ element }}</b> <br> Invalid search element, try another keyword.</p>
+          {% endif %}
           {% endif %}
         </div>
         {% endif %}
