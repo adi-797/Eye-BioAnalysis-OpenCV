@@ -26,8 +26,11 @@
         </div>
         {% if flag != 0 %}
         <div>
-          <p> You have deficiency of {{ deficiency }}. <br> Kindly increase intake of the following food/s {{ food }}.
-          }
+          {% if flag2 == 1 %}
+          <p> Symptom: <b> {{ element }}</b> <br> You have deficiency of <b> {{ deficiency }} </b>. <br> Kindly increase intake of the following food/s: <i>{{ food }}</i>.</p>
+          {% else %}
+          <p> Symptom: <b> {{ element }}</b> <br> Invalid search element, try another keyword.</p>
+          {% endif %}
         </div>
         {% endif %}
   {% endblock %}

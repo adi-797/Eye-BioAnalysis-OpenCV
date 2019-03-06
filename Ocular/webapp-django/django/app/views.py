@@ -765,11 +765,10 @@ def gen_diagnosis(request):
 			for row in read:
 				if row != []:
 					if element in row[0]:
-						ret = { 'flag': 1, 'deficiency':str(row[2]), 'food': str(row[1]), 'flag2':1 }
+						ret = { 'flag': 1, 'deficiency':str(row[2]), 'food': str(row[1]), 'flag2':1 , 'element': str(element)}
 						print (ret)
 						return render(request, 'gen_diagnosis.html', ret)
-
-		return render(request, 'gen_diagnosis.html', {'flag2': 0})
+		return render(request, 'gen_diagnosis.html', {'flag2': 0, 'element': str(element)})
 
 	except:
 		return render(request, 'gen_diagnosis.html', {'flag' : 0})
