@@ -15,8 +15,6 @@ from twilio.rest import Client
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
-#from . import NameForm
-
 class SignUp(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
@@ -26,19 +24,6 @@ def direct_test(request):
     return render(request, 'direct_text.html')
 
 def whatsapppost(a,b):
-
-    # step = int(24/int(b))
-
-    # empty = [9]
-
-    # for i in range(24):
-    #     if empty[0]+step < 24:
-    #         empty.append(empty[0]+step)
-
-    # for i  in range(len(empty)):
-    #     if str(datetime.datetime.now())[12:13] == empty[i]:
-
-
     account_sid = 'ACcd5aa4fc4ca8886844db39d149363f36' 
     auth_token = '602f6db1dd1bd228c84dcbe15f929df1' 
     client = Client(account_sid, auth_token) 
@@ -770,3 +755,21 @@ def history(request):
 
 	return HttpResponse('Done! Please click back button.')
 
+def gen_diagnosis(request):
+
+	try:
+		element = request.GET['search']
+
+		with open('data.csv', 'r') as f:
+			read = csv.reader(f)
+			for row in read:
+				if row != []:
+					if element in row[0]:
+						ret = { 'flag': 1, 'deficiency':str(row[2]), 'food': str(row[1]), 'flag2':1 }
+						print (ret)
+						return render(request, 'gen_diagnosis.html', ret)
+
+		return render(request, 'gen_diagnosis.html', {'flag2': 0})
+
+	except:
+		return render(request, 'gen_diagnosis.html', {'flag' : 0})

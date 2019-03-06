@@ -27,4 +27,5 @@ urlpatterns = [
     path('notifyform/', views.notifyform),
     path('notifyformexec/', views.notifyformexec),
     path('genform/', views.genform),
+    path('gen_diagnosis/', views.gen_diagnosis),
 ]
