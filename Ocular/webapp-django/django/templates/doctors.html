@@ -1,12 +1,57 @@
-{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Sign Up{% endblock %}
-
-{% block content %}
-  <h2>Sign up</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign up</button>
-  </form>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Find a Doctor</title>
+    <link rel="stylesheet" href="{% static 'css/direct_text.css' %}">
+</head>
+<body>
+  {% block flag %}
+        <ul class="menu">
+                <li><a href="/app/history/">History</a></li>
+                <li><a href="/app/logout/">Log Out</a></li>
+                <li class="slider"></li>
+        </ul>
+        <div align="center">
+        	<h3> Choose your city </h3>
+	        <form action="/app/finddoctors/">
+	        	<select name="city" style="color: grey;">
+	                <option value="none" style="text-align: center;"></option>
+	                <option value="delhi" style="text-align: center;">Delhi</option>
+	                <option value="mumbai" style="text-align: center;">Mumbai</option>
+	                <option value="chennai" style="text-align: center;">Chennai</option>
+	                <option value="chandigarh" style="text-align: center;">Chandigarh</option>
+	            </select>
+	            <br>
+	            <h3> Choose the domain </h3>
+	            <select name="domain" style="color: grey;">
+	                <option value="none" style="text-align: center;"></option>
+	                <option value="cardio" style="text-align: center;">Cardiologist</option>
+	                <option value="gastro" style="text-align: center;">Gastroenterologist</option>
+	                <option value="neuro" style="text-align: center;">Neurologist</option>
+	                <option value="ortho" style="text-align: center;">Orthopedic Doctor</option>
+	                <option value="eye specialist" style="text-align: center;">Eye Specialist</option>
+	            </select>
+	            <br><br>
+	            <button>Submit</button>
+	        </form>
+	        {% if flag == 1 %}
+	        <div align="center">
+	        	<br><br>
+	        	{% for ele in doctors %}
+	        	{% if ele == '' %}
+	        	<br><br>
+	        	{% else %}
+	        	{{ ele }} <br>
+	        	{% endif %}
+	        	{% endfor %}
+	        </div>
+	        {% endif %}
+	    </div>
+	    {% endblock %}
+	</body>
+</html>

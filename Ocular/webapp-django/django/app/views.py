@@ -790,4 +790,26 @@ def gen_diagnosis(request):
 			return render(request, 'gen_diagnosis.html', {'flag' : 0})
 
 def finddoctors(request):
-	
+	try:
+		city = request.GET['city']
+		domain = request.GET['domain']
+		city = str(city).lower()
+		domain = str(domain).lower()
+
+		doctors = []
+
+		if city == 'none' or domain == 'none':
+			return render(request, 'doctors.html', { 'flag': 0})
+
+		with open('doctors.csv', 'r') as f:
+				read = csv.reader(f)
+				for row in read:
+					if row[0] != []:
+						if city in row[0] and domain in row[0]:
+							for i in range(1, len(row)):
+								doctors.append(str(row[i]))
+
+		return render(request, 'doctors.html', {'flag': 1, 'doctors': doctors})
+
+	except:
+		return render(request, 'doctors.html', { 'flag': 0})
