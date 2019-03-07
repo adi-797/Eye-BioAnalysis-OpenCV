@@ -246,6 +246,7 @@ def aadhar2(request):
             if barcodeData not in found:
                 found.add(barcodeData)
                 # show the output frame
+
         cv2.imshow("Barcode Scanner", frame)
         key = cv2.waitKey(1) & 0xFF
 
@@ -319,9 +320,9 @@ def camera():
     face_cascade = cv2.CascadeClassifier(os.path.join(BASE_DIR, 'haarcascade_frontalface_alt.xml'))
 
     try:
-        camera=cv2.VideoCapture(0)
+        camera=cv2.VideoCapture(1)
     except:
-        camera = cv2.VideoCapture(1)
+        camera = cv2.VideoCapture(0)
 
     numerator=0
     denominator=0
@@ -787,3 +788,6 @@ def gen_diagnosis(request):
 
 		except:
 			return render(request, 'gen_diagnosis.html', {'flag' : 0})
+
+def finddoctors(request):
+	
