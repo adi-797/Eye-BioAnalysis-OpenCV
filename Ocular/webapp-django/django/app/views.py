@@ -854,10 +854,88 @@ def camera_module():
 
     return sample
 
-def cholesterol_login_module(request):
-	sample = camera_module()
+def call_chol (request, ratio_of_grey):
+    ret = 'NULL'
+    if ratio_of_grey>= 0.2 and ratio_of_grey<= 0.35:
+        ret ="MILD"
+    elif ratio_of_grey> 0.35:
+        ret ="MILD"
+    else:
+        ret ="MILD"
+    return ret
 
-	return HttpResponse('ok')
+def nothing():
+    pass
+
+def cholesterol_login_module(request):
+
+	ret = 'Not able to define'
+	img1 = camera_module()
+	img2 = cv2.resize(img1, (400,400))
+	blur = cv2.medianBlur(img2,5)
+	bil = cv2.bilateralFilter(blur,5,1000,1000)
+	copy_orig = bil.copy()
+	gray = cv2.cvtColor(bil,cv2.COLOR_BGR2GRAY)
+	ret,thresh1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY_INV)
+	cv2.imshow('Masked Image', thresh1)
+	cv2.createTrackbar('min_value','Masked Image',0,255,nothing)
+
+	while(1):
+		cv2.imshow('Masked Image', thresh1)
+		min_value = cv2.getTrackbarPos('min_value', 'Masked Image')
+		ret,thresh1 = cv2.threshold(gray,min_value,255,cv2.THRESH_BINARY_INV)
+		k = cv2.waitKey(37)
+		if k == 27:
+			cv2.destroyAllWindows()
+			break
+	contours, hierarchy = cv2.findContours(thresh1, 1, 2)
+	cont = max(contours, key=cv2.contourArea)
+	(x,y), pupil_radius = cv2.minEnclosingCircle(cont)
+	pupil_center = (int(x), int(y))
+	pupil_radius = int(pupil_radius)
+	cv2.circle(img2, pupil_center, pupil_radius, (0,0,255), 2)
+	iris_radius = pupil_radius*4
+	(cx,cy) = (int(x)+iris_radius, int(y))
+	while(1):
+		color = gray[cy,cx]
+		if color>110:
+			cx = cx-1
+		else:
+			break
+	iris_radius = cx-pupil_center[0]
+	cv2.circle(img2,pupil_center,iris_radius , (0,0,255), 2)
+	cv2.circle(img2,pupil_center,iris_radius , (255,255,255), -1)
+	gray1 = cv2.cvtColor(img2,cv2.COLOR_BGR2GRAY)
+	ret,thresh2 = cv2.threshold(gray1,250,255,cv2.THRESH_BINARY)
+	contours, hierarchy = cv2.findContours(thresh2, 1, 2)
+	if len(contours)>0:
+		maxC = max(contours, key=cv2.contourArea)
+		x,y,w,h = cv2.boundingRect(maxC)
+		cv2.rectangle(img2,(x,y),(x+w,y+h),(255,255,255),2)
+		cropped = copy_orig[y:y+h, x:x+w]
+		cropped = cv2.resize(cropped, (240,240))
+		mask = np.zeros(img2.shape, dtype = "uint8")
+		cv2.circle(mask,pupil_center,iris_radius , (255,255,255), -1)
+		cv2.circle(copy_orig, pupil_center, int(pupil_radius*2.2), (0,0,0), -1)
+		mask = mask[y:y+h, x:x+w]
+		mask = cv2.resize(mask, (240,240))
+		mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+		copy_orig = copy_orig[y:y+h, x:x+w]
+		copy_orig = cv2.resize(copy_orig, (240,240))
+		res = cv2.bitwise_and(copy_orig,copy_orig, mask = mask)
+		y, x = res.shape[:2]
+		total = 0
+		mat = 0
+
+		for i in range(x):
+			for j in range(y):
+				arr = res[j, i]
+				if (abs(arr[0]-arr[1])<=10) and (abs(arr[1]-arr[2])<=10) and (abs(arr[2]-arr[1]) <= 10):
+					mat+=1
+					total+=1
+		ratio_of_grey = mat/total;ret = call_chol(request, ratio_of_grey);log_med_data('chol', ret);return render(request, 'result.html', {'value': 'State : ' + ret})
+     #    log_med_data('chol', ret)
+	# return render(request, 'result.html', { 'value':  'State : ' + })
 
 def bilirubin_login_module(request):
 	image = camera_module()
@@ -867,7 +945,7 @@ def bilirubin_login_module(request):
 	frame = image.copy()
 
 	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-	lower_yellow = np.array([18,40,120]) #all shades of yellow
+	lower_yellow = np.array([15,20,120]) #all shades of yellow
 	upper_yellow = np.array([60,255,255])
 	mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
 	res = cv2.bitwise_and(frame,frame, mask = mask)
@@ -887,8 +965,53 @@ def bilirubin_login_module(request):
 	average = 1- np.interp(average, [0,255], [0,1])
 	bil_val = ((((average*mat)/61440)/3.8)*100)
 
+	log_med_data('bil', bil_val)
+
 	return render(request, 'result.html', { 'value':  'Levels between ' + str(bil_val * 0.9) + ' and ' + str(bil_val * 1.1)})
 
 def cataract_login_module(request):
-	sample = camera_module()
-	return HttpResponse('ok')
+
+    ret = 'Not able to define'
+    img1 = camera_module()
+    img2 = cv2.resize(img1, (400,400))
+    blur = cv2.medianBlur(img2,5)
+    bil = cv2.bilateralFilter(blur,5,1000,1000)
+    copy_orig = bil.copy()
+    gray = cv2.cvtColor(bil,cv2.COLOR_BGR2GRAY)
+    ret,thresh1 = cv2.threshold(gray,127,255,cv2.THRESH_BINARY_INV)
+    cv2.imshow('Masked Image', thresh1)
+    cv2.createTrackbar('min_value','Masked Image',0,255,nothing)
+
+    while(1):
+        cv2.imshow('Masked Image', thresh1)
+        min_value = cv2.getTrackbarPos('min_value', 'Masked Image')
+        ret,thresh1 = cv2.threshold(gray,min_value,255,cv2.THRESH_BINARY_INV)
+        k = cv2.waitKey(37)
+        if k == 27:
+            cv2.destroyAllWindows()
+            break
+    contours, hierarchy = cv2.findContours(thresh1, 1, 2)
+    cont = max(contours, key=cv2.contourArea)
+    (x,y), pupil_radius = cv2.minEnclosingCircle(cont)
+    pupil_center = (int(x), int(y))
+    pupil_radius = int(pupil_radius)
+    mask = np.zeros(img2.shape, dtype = "uint8")
+    cv2.circle(mask,pupil_center,pupil_radius , (255,255,255), -1)
+    mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+    res = cv2.bitwise_and(img2,img2, mask = mask)
+    y, x = res.shape[:2]
+    cv2.imshow('frame-masked', res)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    total = 0
+    mat = 0
+    for i in range(x):
+        for j in range(y):
+            arr = res[j, i]
+            if (abs(arr[0]-arr[1])<=10) and (abs(arr[1]-arr[2])<=10) and (abs(arr[2]-arr[1]) <= 10):
+                mat+=1
+            total+=1
+    ratio_of_grey = mat/total
+    cat_val = ratio_of_grey*5
+    log_med_data('cat', cat_val)
+    return render(request, 'result.html', {'value': 'Percentage: ' + str(cat_val) + ' %'})
