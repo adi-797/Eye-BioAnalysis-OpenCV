@@ -622,7 +622,7 @@ def bilirubin_login(request):
 def cataract_login(request):
     sample_frame, cx, cy = camera()
 
-    cataract_level = cataract(sample_frame, cx, cy)
+    cataract_level = cataract(sample_frame, cx, cy)/10
 
     log_med_data('cat', cataract_level)
 
@@ -895,7 +895,7 @@ def cholesterol_login_module(request):
 	pupil_radius = int(pupil_radius)
 	cv2.circle(img2, pupil_center, pupil_radius, (0,0,255), 2)
 	iris_radius = pupil_radius*4
-	(cx,cy) = (int(x)+iris_radius, int(y))
+	(cx,cy) = (int(x)+iris_radius, int(y));a,b = img2.shape[:2];(cx, cy) = (a,b) if cx > a or cx > b else (cx, cy)
 	while(1):
 		color = gray[cy,cx]
 		if color>110:
