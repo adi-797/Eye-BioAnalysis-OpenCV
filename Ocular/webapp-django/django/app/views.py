@@ -856,11 +856,38 @@ def camera_module():
 
 def cholesterol_login_module(request):
 	sample = camera_module()
+
 	return HttpResponse('ok')
 
 def bilirubin_login_module(request):
-	sample = camera_module()
-	return HttpResponse('ok')
+	image = camera_module()
+	image = imutils.resize(image, width=640, height=480)
+	image = cv2.medianBlur(image,5)
+	image = cv2.bilateralFilter(image,5,1000,1000)
+	frame = image.copy()
+
+	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+	lower_yellow = np.array([18,40,120]) #all shades of yellow
+	upper_yellow = np.array([60,255,255])
+	mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+	res = cv2.bitwise_and(frame,frame, mask = mask)
+	image = res.copy()
+	res = cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
+	y, x = res.shape[:2]
+	total = 0
+	mat = 0
+	for i in range(x):
+		for j in range(y):
+			arr = res[j, i]
+			if arr == 0:
+				continue
+			mat+=1
+			total+=arr
+	average = float(total)/float(mat) #per pixel intensity
+	average = 1- np.interp(average, [0,255], [0,1])
+	bil_val = ((((average*mat)/61440)/3.8)*100)
+
+	return render(request, 'result.html', { 'value':  'Levels between ' + str(bil_val * 0.9) + ' and ' + str(bil_val * 1.1)})
 
 def cataract_login_module(request):
 	sample = camera_module()
