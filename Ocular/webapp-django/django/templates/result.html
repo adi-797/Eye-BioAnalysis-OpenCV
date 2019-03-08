@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Direct Test</title>
+    <link rel="stylesheet" href="{% static 'css/direct_text.css' %}">
+</head>
+<body>
+        <ul class="menu">
+                <li><a href="/app/history/">History</a></li>
+                <li><a href="/app/logout/">Log Out</a></li>
+                <li class="slider"></li>
+        </ul>
+
+        <div style="margin-right: 20%;margin-left: 20%; margin-top: 5%; border-color: #000; background-color: gray;">
+          <p style="font-size: 32px; padding: 100px" align="center"> <b>{{ value }}</b> </p>
+        </div>
+  </body>
+</html>

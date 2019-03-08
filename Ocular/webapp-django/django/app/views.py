@@ -11,7 +11,7 @@ from imutils.video import VideoStream
 import argparse
 import datetime
 from pandas import DataFrame
-from twilio.rest import Client
+from twilio.rest import Client 
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
@@ -209,9 +209,9 @@ def aadhar(request):
 
 def aadhar2(request):
     try:
-        vs = VideoStream(src=0).start()
-    except:
         vs = VideoStream(src=1).start()
+    except:
+        vs = VideoStream(src=0).start()
 
     time.sleep(2.0)
     found = set()
@@ -280,7 +280,10 @@ def aadhar2(request):
                     name = str(temp)
                     break
 
-    passvar = {'pass': uid, 'user': name}
+    try:
+    	passvar = {'pass': uid, 'user': name}
+    except:
+    	return HttpResponse('Aadhar barcode uid invalid. Please show an alternate copy.')
 
     with open('auth.csv', 'a') as f:
     	f.write(str(uid) + '+' + str(name) + ': bil:*\n')
@@ -320,9 +323,9 @@ def camera():
     face_cascade = cv2.CascadeClassifier(os.path.join(BASE_DIR, 'haarcascade_frontalface_alt.xml'))
 
     try:
-        camera=cv2.VideoCapture(1)
+        camera=cv2.VideoCapture(0)
     except:
-        camera = cv2.VideoCapture(0)
+        camera = cv2.VideoCapture(1)
 
     numerator=0
     denominator=0
@@ -613,7 +616,7 @@ def bilirubin_login(request):
     rang = str(bilirubin_level*3) + ' to ' + str(bilirubin_level*9) + ' mg/dl'
     rang = str(rang)
 
-    return HttpResponse(rang)
+    return render(request, 'result.html', {'value' : rang })
 
 
 def cataract_login(request):
@@ -626,7 +629,7 @@ def cataract_login(request):
     cataract_level = "Percentage = " + str(cataract_level) + " %"
     cataract_level = str(cataract_level)
 
-    return HttpResponse(cataract_level)
+    return render(request, 'result.html', {'value' : cataract_level })
 
 
 def cholesterol_login(request):
@@ -636,7 +639,7 @@ def cholesterol_login(request):
 
     log_med_data('chol', cholesterol_level)
 
-    return HttpResponse(cholesterol_level)
+    return render(request, 'result.html', {'value' : cholesterol_level })
 
 def bilirubin_(request):
     sample_frame,cx,cy = camera()
@@ -646,7 +649,7 @@ def bilirubin_(request):
     rang = str(bilirubin_level*3) + ' to ' + str(bilirubin_level*9) + ' mg/dl'
     rang = str(rang)
 
-    return HttpResponse(rang)
+    return render(request, 'result.html', {'value' : rang })
 
 def cataract_(request):
     sample_frame,cx,cy = camera()
@@ -656,14 +659,14 @@ def cataract_(request):
     cataract_level = "Percentage = " + str(cataract_level) + " %"
     cataract_level = str(cataract_level)
 
-    return HttpResponse(cataract_level)
+    return render(request, 'result.html', {'value' : cataract_level })
 
 def cholesterol_(request):
     sample_frame,cx,cy = camera()
 
     cholesterol_level = cholesterol(sample_frame,cx,cy)
 
-    return HttpResponse(cholesterol_level)
+    return render(request, 'result.html', {'value' : cholesterol_level })
 
 def about(request):
     return render(request, 'about.html')
@@ -813,3 +816,52 @@ def finddoctors(request):
 
 	except:
 		return render(request, 'doctors.html', { 'flag': 0})
+
+
+def diagnosis_option(request):
+	try:
+		option = request.GET['option']
+		if option == 'YES':
+			return render(request, 'diagnosis_module.html')
+		else:
+			return render(request, 'diagnosis_registered.html')
+	except:
+		return render(request, 'diagnosis_option.html')
+
+def camera_module():
+    try:
+        camera=cv2.VideoCapture(1)
+    except:
+        camera = cv2.VideoCapture(0)
+
+    while True:
+
+        ret, frame = camera.read()
+        frame_copy = frame
+        roi=frame
+        frame=cv2.flip(frame,1)        
+    
+        cv2.putText(frame,'Press "ESC" to capture.',(20,30), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,0,0),2,cv2.LINE_AA)
+        cv2.imshow("frame",frame)
+        
+        #cv2.imshow("eye",image)
+        if cv2.waitKey(30)==27 & 0xff:
+            ret, sample = camera.read()
+            break
+    camera.release()
+    #print ("accurracy=",(float(numerator)/float(numerator+denominator))*100)
+    cv2.destroyAllWindows()
+
+    return sample
+
+def cholesterol_login_module(request):
+	sample = camera_module()
+	return HttpResponse('ok')
+
+def bilirubin_login_module(request):
+	sample = camera_module()
+	return HttpResponse('ok')
+
+def cataract_login_module(request):
+	sample = camera_module()
+	return HttpResponse('ok')

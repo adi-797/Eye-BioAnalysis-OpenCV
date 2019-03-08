@@ -28,5 +28,9 @@ urlpatterns = [
     path('notifyformexec/', views.notifyformexec),
     path('genform/', views.genform),
     path('gen_diagnosis/', views.gen_diagnosis),
-    path('finddoctors/', views.finddoctors)
+    path('finddoctors/', views.finddoctors),
+    path('diagnosis_option/', views.diagnosis_option),
+    path('camera/cholesterol_login_module/', views.cholesterol_login_module),
+    path('camera/bilirubin_login_module/', views.bilirubin_login_module),
+    path('camera/cataract_login_module/', views.cataract_login_module),
 ]
