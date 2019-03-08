@@ -752,7 +752,7 @@ def history(request):
 	cat = mpatches.Patch(color='green', label='Cataract levels (%)')
 	chol = mpatches.Patch(color='red', label='Cholesterol levels (NORMAL=1, MILD=5, HIGH=10')
 	plt.legend(handles = [bil, cat, chol])
-	plt.plot(num_list, 'y')
+	plt.plot(num_list, 'y');plt.title('History')
 	plt.plot(num_list2, 'g')
 	plt.plot(num_list3, 'r')
 	plt.show()
@@ -961,13 +961,13 @@ def bilirubin_login_module(request):
 				continue
 			mat+=1
 			total+=arr
-	average = float(total)/float(mat) #per pixel intensity
+	average = float(total)/float(mat) if mat>0 else 1000#per pixel intensity
 	average = 1- np.interp(average, [0,255], [0,1])
-	bil_val = ((((average*mat)/61440)/3.8)*100)
+	bil_val = ((((average*mat)/61440)/3.8)*100) if mat>0 else 0.5
 
 	log_med_data('bil', bil_val)
 
-	return render(request, 'result.html', { 'value':  'Levels between ' + str(bil_val * 0.9) + ' and ' + str(bil_val * 1.1)})
+	return render(request, 'result.html', { 'value':  'Levels between ' + str(bil_val * 0.9) + ' mg/dl and ' + str(bil_val * 1.1) + ' mg/dl'})
 
 def cataract_login_module(request):
 
@@ -1000,9 +1000,6 @@ def cataract_login_module(request):
     mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
     res = cv2.bitwise_and(img2,img2, mask = mask)
     y, x = res.shape[:2]
-    cv2.imshow('frame-masked', res)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
     total = 0
     mat = 0
     for i in range(x):
