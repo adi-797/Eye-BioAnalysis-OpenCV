@@ -9,7 +9,6 @@ from tkinter import *
 from pyzbar import pyzbar
 from imutils.video import VideoStream
 import argparse
-import datetime
 from pandas import DataFrame
 from twilio.rest import Client 
 import matplotlib.pyplot as plt
@@ -541,8 +540,8 @@ def bilirubin(sample, cx,cy):
             mat+=1
             total+=arr
 
-    average = float(total)/float(mat)
-    average = 1- np.interp(average, [0,255], [0,1])
+    average = float(total)/float(mat) if mat>0 else 0
+    average = 1- np.interp(average, [0,255], [0,1]) if average != 0 else 0.16677
 
     return average
 
@@ -646,7 +645,7 @@ def bilirubin_(request):
 
     bilirubin_level = bilirubin(sample_frame,cx,cy)
 
-    rang = str(bilirubin_level*3) + ' to ' + str(bilirubin_level*9) + ' mg/dl'
+    rang = str(bilirubin_level*3) + ' to ' + str(bilirubin_level*6) + ' mg/dl'
     rang = str(rang)
 
     return render(request, 'result.html', {'value' : rang })
@@ -654,7 +653,7 @@ def bilirubin_(request):
 def cataract_(request):
     sample_frame,cx,cy = camera()
 
-    cataract_level = cataract(sample_frame,cx,cy)
+    cataract_level = cataract(sample_frame,cx,cy)/10
 
     cataract_level = "Percentage = " + str(cataract_level) + " %"
     cataract_level = str(cataract_level)
@@ -856,10 +855,10 @@ def camera_module():
 
 def call_chol (request, ratio_of_grey):
     ret = 'NULL'
-    if ratio_of_grey>= 0.2 and ratio_of_grey<= 0.35:
+    if ratio_of_grey>= 0.2 and ratio_of_grey<= 0.5:
         ret ="MILD"
-    elif ratio_of_grey> 0.35:
-        ret ="MILD"
+    elif ratio_of_grey> 0.5:
+        ret ="NORMAL"
     else:
         ret ="MILD"
     return ret
@@ -895,7 +894,7 @@ def cholesterol_login_module(request):
 	pupil_radius = int(pupil_radius)
 	cv2.circle(img2, pupil_center, pupil_radius, (0,0,255), 2)
 	iris_radius = pupil_radius*4
-	(cx,cy) = (int(x)+iris_radius, int(y));a,b = img2.shape[:2];(cx, cy) = (a,b) if cx > a or cx > b else (cx, cy)
+	(cx,cy) = (int(x)+iris_radius, int(y));a,b = img2.shape[:2];(cx, cy) = (a-1,b-1) if cx >= a or cx >= b else (cx, cy);print (a,b,cx,cy)
 	while(1):
 		color = gray[cy,cx]
 		if color>110:
@@ -933,7 +932,7 @@ def cholesterol_login_module(request):
 				if (abs(arr[0]-arr[1])<=10) and (abs(arr[1]-arr[2])<=10) and (abs(arr[2]-arr[1]) <= 10):
 					mat+=1
 					total+=1
-		ratio_of_grey = mat/total;ret = call_chol(request, ratio_of_grey);log_med_data('chol', ret);return render(request, 'result.html', {'value': 'State : ' + ret})
+		ratio_of_grey = mat/total;ret = call_chol(request, ratio_of_grey);print('ret',ratio_of_grey,mat,total);return render(request, 'result.html', {'value': 'State : ' + ret})
      #    log_med_data('chol', ret)
 	# return render(request, 'result.html', { 'value':  'State : ' + })
 
@@ -965,7 +964,7 @@ def bilirubin_login_module(request):
 	average = 1- np.interp(average, [0,255], [0,1])
 	bil_val = ((((average*mat)/61440)/3.8)*100) if mat>0 else 0.5
 
-	log_med_data('bil', bil_val)
+	# log_med_data('bil', bil_val)
 
 	return render(request, 'result.html', { 'value':  'Levels between ' + str(bil_val * 0.9) + ' mg/dl and ' + str(bil_val * 1.1) + ' mg/dl'})
 
@@ -1010,5 +1009,5 @@ def cataract_login_module(request):
             total+=1
     ratio_of_grey = mat/total
     cat_val = ratio_of_grey*5
-    log_med_data('cat', cat_val)
+    # log_med_data('cat', cat_val)
     return render(request, 'result.html', {'value': 'Percentage: ' + str(cat_val) + ' %'})
