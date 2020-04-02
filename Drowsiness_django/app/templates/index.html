@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+    <title>Major Project - ECE-2</title>
+  </head>
+  
+  <body>
+
+    <header>
+      <div class="header_custom">
+         <div class="container">
+              <p align="center" class="heading">Drowsiness Detection Application</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="col-md-12" align="center">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 col-sm-12">
+
+              <form align="center" method="POST" action="{% url 'login' %}">
+                
+                  {% csrf_token %}
+                  <p class="form-text">User Name:</p>
+                  <i class="fa fa-sign-in fa-3x side-stick"></i><input type="text" name="username" placeholder="Enter your username" class="input" required>
+
+                  <p class="form-text">Password:</p>
+                  <i class="fa fa-key fa-3x side-stick"></i><input type="password" name="password" placeholder="Enter your password" class="input" required><br/>
+                  
+                  <button class="btn btn-primary btnhome" id="btnhome" align="center"><strong>LOGIN</strong></button>
+              </form>
+        
+          </div>
+        </div>        
+      </div>
+    </div>
+
+    <footer>
+
+      <div>
+          <p class="credits">
+            Developed and Managed by Diksha Chawla | Kushagra Sengar | Siddhart Gulati | Soumya Kumar<strong> (ECE - 2 )</strong>
+          </p>
+      </div>
+  </footer>
+
+  </body>
+
+</html>
+
+<style type="text/css">
+  body {
+    background: url('https://ik.imagekit.io/oudoefh4n/vector-blue-squares-abstract-background-geometric_lRBizXdIl.jpg');
+    background-size: cover;
+  }
+
+  form {
+    border: 4px solid #333;
+    border-radius: 40px;
+    background-color: #ccc;
+    opacity: 0.9;
+    padding: 40px 0;
+  }
+
+  header {
+    margin-bottom: 100px;
+  }
+
+  .heading {
+    color: white;
+    font-size: 32px;
+    padding-top: 10px; 
+  }
+
+  .btnhome {
+    color:white;
+    background-color:#05011C;
+    opacity:0.8;
+    margin-top:10px;
+    margin-right: 15px;
+    padding: 8px 20px 8px 20px;
+  }
+
+  .input {
+    border-radius: 0px;
+    font-size: 24px;
+    color: black;
+    background-color: #DEF1FF;
+    opacity: 0.8;
+    width: 210px;
+    height: 47px;
+  }
+
+  .form-text {
+      font-size:24px;
+      margin-bottom : 10px;
+      margin-top:20px;
+      margin-left: -25px;
+  }
+
+  .header_custom {
+    background-color: #05011C;
+    height: 65px;
+    width: 100%;
+    position: fixed;
+    top: 0%;
+    opacity: 1;
+    z-index: 1000;
+  }
+
+  .loginform {
+    top: 20%;
+    position: fixed;
+  }
+
+  .credits {
+    color: white;
+    font-size: 18px;
+    position: fixed;
+    right:1%;
+    bottom: 0%;
+  }
+
+  .side-stick {
+    background-color: #05011C;
+    color: white;
+    padding: 3px;
+  }
+
+  @media (max-width: 620px) {
+    .credits {
+      color:black;
+      right: 0%;
+      font-size: 16px;
+    }
+
+    .heading {
+      font-size: 24px;
+    }
+  }
+</style>
