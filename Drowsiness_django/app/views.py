@@ -31,7 +31,3 @@ def login(request):
 
 	except ObjectDoesNotExist:
 		return render(request, 'dashboard.html', {'auth':False})
-
-def execute(request):
-	checkD()
-	return render(request, 'dashboard.html', {'auth':True})

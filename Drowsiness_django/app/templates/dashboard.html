@@ -28,8 +28,8 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-12 col-sm-12">
-            <form method="POST" action="{% url 'execute' %}">
-              {% csrf_token %}
+            <form action="execute">
+              <!-- {% csrf_token %} -->
               <input type="text" name="shoot" value="1" class="null">
               <button class="btn big-btn">Run Application</button>
             </form>
